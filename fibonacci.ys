@@ -1,0 +1,197 @@
+// Harjoituksen tarkoitus oli kääntää tämä koodinpätkä Y86-64 Assemblylle.
+
+/* bool isPerfectSquare(int x) {
+    int s = sqrt(x);
+    return (s*s == x);
+}
+  
+// Returns true if n is a Fibonacci Number, else false
+bool isFibonacci(int x) {
+    return isPerfectSquare(5*x*x + 4) || isPerfectSquare(5*x*x - 4);
+} */
+
+main:
+
+    irmovq pino, %rsp           #Initialize stack variables
+    irmovq pino, %rbp
+    irmovq array, %rbx          #Array adress in %rbx
+
+loop:
+    irmovq $8, %r8
+    irmovq $0, %r14
+    mrmovq (%rbx), %rax         #move Array index in %rax
+    addq %r8, %rbx              #next array index
+    subq %r14, %rax              #Check if %rax = 0. Stops the program if it is, else continue
+    je end
+    rrmovq %rax, %rsi           #Moves %rax to global input variable %rsi and call multiplication x*x
+    call mp1
+    irmovq $0, %rdx             #5* multiplication and + 4,  %rcx is global output variable
+    irmovq $4, %r8
+    addq %rcx, %rdx
+    addq %rcx, %rdx
+    addq %rcx, %rdx
+    addq %rcx, %rdx
+    addq %rcx, %rdx
+    addq %r8, %rdx
+    rrmovq %rdx, %r13
+    rrmovq %r13, %rsi
+    call sqrt                   #Take square root s of 5*x*x+4
+    rrmovq %rcx, %rsi
+    call mp1                    #multiply square root s
+    subq %rcx, %r13             #Check if s*s = 5*x*x+4 if true continue to next array index
+    je loop                     #else take square root of 5*x*x-4
+    addq %rcx, %r13
+    irmovq $8, %r8
+    subq %r8, %r13
+    rrmovq %r13, %rsi
+    call sqrt
+    rrmovq %rcx, %rsi
+    call mp1
+    subq %rcx, %r13             #Check if s*s != 5*x*x-4 stop program
+    je loop
+end:
+    halt
+
+
+sqrt:                           #count sqrt
+    irmovq $4194304, %rdx       #2¨22
+    irmovq $0, %rcx
+loopsq1:
+    subq %rsi, %rdx             #while (%rdx > input) %rdx >> 2
+    jle oversq1
+    addq %rsi, %rdx
+    call bs2
+    jmp loopsq1
+oversq1:
+    addq %rsi, %rdx
+loopsq2:
+    irmovq $0, %r14
+    subq %r14, %rdx             #loop stops when %rdx == 0
+    je endsqrt
+    subq %rdx, %rsi
+    subq %rcx, %rsi
+    jl oversq2
+    call bs                     #if input >= %rdx + %rcx(output)
+    addq %rdx, %rcx
+    call bs2
+    jmp loopsq2
+oversq2:                        #else
+    addq %rdx, %rsi
+    addq %rcx, %rsi
+    call bs
+    call bs2
+    jmp loopsq2
+endsqrt:
+    ret
+
+
+
+bs:                             #bit shift 1 right in sqrt
+    irmovq $1, %r8
+    irmovq $0, %r9
+    irmovq $0, %r14
+loopbs:
+    addq %r14, %rcx
+    rrmovq %rcx, %r10
+    andq %r8, %r10
+    je overbs
+    subq %r10, %rcx
+    addq %r9, %rcx
+    addq %r9, %r14
+overbs:
+    rrmovq %r8, %r9
+    addq %r8, %r8
+    subq %r14, %rcx
+    jg loopbs
+endbs:
+    addq %r14, %rcx
+    ret
+
+bs2:                                #shift %rdx 2 bits right
+    irmovq $4194304, %r10
+    andq %rdx, %r10
+    irmovq $1048576, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $262144, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $65536, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $16384, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $4096, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $1024, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $256, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $64, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $16, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $4, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $1, %r10
+    jne endbs2
+    andq %rdx, %r10
+    irmovq $0, %r10
+    jne endbs2
+endbs2:
+    rrmovq %r10, %rdx
+    ret
+
+
+mp1:                            #first part of multiplication
+    irmovq $0, %rcx
+    irmovq $0, %rdx
+    irmovq $1, %r8
+    rrmovq %rsi, %rdi           #clone input(%rsi) to %rdi
+    andq %rsi, %r8
+    cmovne %rdi, %rcx           #if first bit == 1, delete it from input add 1*clone to output
+    subq %r8, %rsi
+    subq %rdx, %rsi
+    je endmp1
+    irmovq $1, %r8
+    irmovq $1, %r11
+    irmovq $1, %r12
+loopmp1:
+    addq %r8, %r8               #check every bit of input and shift left by the bit index
+    rrmovq %rsi, %rdx
+    andq %r8, %rdx
+    je overmp1
+    call mp2                    #if bit is in input, shift clone and add it in output
+    subq %r8, %rsi              #delete bit from input and ret in main if input == 0
+    je endmp1
+overmp1:
+    addq %r11, %r12
+    jmp loopmp1
+endmp1:
+    ret
+
+mp2:                            #clones %rdi (clone of input), shifts it and adds it %rcx (output)
+    rrmovq %rdi, %r10
+    rrmovq %r12, %r9
+loopmp2:
+    addq %r10, %r10
+    subq %r11, %r9
+    jg loopmp2
+endmp2:
+    addq %r10, %rcx
+    ret
+
+
+
+.pos 0x500
+pino:
+
+.pos 0x700
+array:
