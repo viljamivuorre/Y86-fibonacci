@@ -1,4 +1,6 @@
 // Harjoituksen tarkoitus oli kääntää tämä koodinpätkä Y86-64 Assemblylle.
+// Ohjelma tarkistaa listassa olevista arvoista ovatko ne fibonaccin lukuja. Ohjelma pysähtyy ja palauttaa rekisterissä %rax ensimmäisen luvun joka ei ole fibonaccin
+// luku. Listan lopussa on 0 jonka ohjelma palauttaa jos kaikki listan luvut ovat fibonaccin lukuja.
 
 /* bool isPerfectSquare(int x) {
     int s = sqrt(x);
