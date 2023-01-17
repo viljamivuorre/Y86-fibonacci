@@ -1,7 +1,5 @@
-// Harjoituksen tarkoitus oli kääntää tämä koodinpätkä Y86-64 Assemblylle.
-// Ohjelma tarkistaa listassa olevista arvoista ovatko ne fibonaccin lukuja. Ohjelma pysähtyy ja palauttaa rekisterissä %rax ensimmäisen luvun joka ei ole fibonaccin
-// luku. Listan lopussa on 0 jonka ohjelma palauttaa jos kaikki listan luvut ovat fibonaccin lukuja.
 
+// Harjoituksen tarkoitus oli kääntää tämä koodinpätkä Y86-64 Assemblylle.
 /* bool isPerfectSquare(int x) {
     int s = sqrt(x);
     return (s*s == x);
@@ -11,6 +9,26 @@
 bool isFibonacci(int x) {
     return isPerfectSquare(5*x*x + 4) || isPerfectSquare(5*x*x - 4);
 } */
+
+// Ohjelma tarkistaa listassa olevista arvoista ovatko ne fibonaccin lukuja. Ohjelma pysähtyy ja palauttaa rekisterissä %rax ensimmäisen luvun joka ei ole fibonaccin
+// luku. Listan lopussa on 0 jonka ohjelma palauttaa jos kaikki listan luvut ovat fibonaccin lukuja.
+// Esim. alustus:
+// .pos 0
+// irmovq array,%r11
+// irmovq $233,%r12
+// rmmovq %r12,(%r11)
+// irmovq $377,%r12
+// rmmovq %r12,8(%r11)
+// irmovq $610,%r12
+// rmmovq %r12,16(%r11)
+// irmovq $987,%r12
+// rmmovq %r12,24(%r11)
+// irmovq $0,%r12
+// rmmovq %r12,32(%r11)
+//
+//  Y86 simulaattori netissä: https://boginw.github.io/js-y86-64/
+//
+
 
 main:
 
