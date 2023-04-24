@@ -1,0 +1,42 @@
+#
+#   Tässä huomattavasti yksinkertaisempi ja tehokkaampi ohjelma saman tehtävän ratkaisemiseen.
+#
+
+
+main:
+    irmovq pino, %rsp           #Initialize stack variables
+    irmovq pino, %rbp
+    irmovq array, %rbx          #Array adress in %rbx
+    irmovq $8, %r8              
+    irmovq $1, %r9              #first fibonacci number (always previous fibonacci number for %r10)
+    irmovq $1, %r10             #second fibonacci number (this is what program uses for comparise %rax to fibonacci numbers)
+    irmovq $0, %r11
+    mrmovq (%rbx), %rax         #first number from array to %rax
+loop:
+    subq %r11, %rax             #checking if number is 0
+    je end
+    subq %r10, %rax             #if %rax < %r10 number is not fibonacci number and program stops
+    jl end0
+    je nextindex                #if %rax == %r10 number is fibonacci number and program moves on to the next number
+    addq %r10, %rax             #else if %rax > %r10 program continues comparison with next fibonacci number 
+    rrmovq %r10, %r12           #like: (%r9 3 -> 5, %r9 2 -> 3)
+    addq %r9, %r10
+    rrmovq %r12, %r9
+    jmp loop
+nextindex:
+    addq %r8, %rbx
+    mrmovq (%rbx), %rax         #next number from array
+    irmovq $1, %r9
+    irmovq $1, %r10
+    jmp loop
+end0:
+    addq %r10, %rax
+end:
+    halt
+
+
+.pos 0x500
+pino:
+
+.pos 0x700
+array:
