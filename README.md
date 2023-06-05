@@ -1,5 +1,5 @@
 # Y86-fibonacci
-The goal of the project was to translate this sequence of code to y86-64 assembly and optimize it.
+The goal of this school project was to translate this sequence of code to y86-64 assembly and optimize it.
 
 bool isPerfectSquare(int x) {
     int s = sqrt(x);
@@ -13,6 +13,8 @@ bool isFibonacci(int x) {
 
 The program checks the values in the array to see if they are Fibonacci numbers. The program stops and returns the first non-Fibonacci number in the register %rax
 number. At the end of the array there is 0, which the program returns if all the numbers in the array are Fibonacci numbers.
+
+The end result of the project was a perfect success. One criteria was to optimize it for check one 5 value array with max 100 000 commands but this program works with  < 30 000 command. 
 
 Esim. alustus:
 .pos 0
