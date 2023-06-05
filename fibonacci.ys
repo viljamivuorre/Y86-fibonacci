@@ -1,35 +1,4 @@
 
-// Harjoituksen tarkoitus oli kääntää tämä koodinpätkä Y86-64 Assemblylle.
-/* bool isPerfectSquare(int x) {
-    int s = sqrt(x);
-    return (s*s == x);
-}
-  
-// Returns true if n is a Fibonacci Number, else false
-bool isFibonacci(int x) {
-    return isPerfectSquare(5*x*x + 4) || isPerfectSquare(5*x*x - 4);
-} */
-
-// Ohjelma tarkistaa listassa olevista arvoista ovatko ne fibonaccin lukuja. Ohjelma pysähtyy ja palauttaa rekisterissä %rax ensimmäisen luvun joka ei ole fibonaccin
-// luku. Listan lopussa on 0 jonka ohjelma palauttaa jos kaikki listan luvut ovat fibonaccin lukuja.
-// Esim. alustus:
-// .pos 0
-// irmovq array,%r11
-// irmovq $233,%r12
-// rmmovq %r12,(%r11)
-// irmovq $377,%r12
-// rmmovq %r12,8(%r11)
-// irmovq $610,%r12
-// rmmovq %r12,16(%r11)
-// irmovq $987,%r12
-// rmmovq %r12,24(%r11)
-// irmovq $0,%r12
-// rmmovq %r12,32(%r11)
-//
-//  Y86 simulaattori netissä: https://boginw.github.io/js-y86-64/
-//
-
-
 main:
 
     irmovq pino, %rsp           #Initialize stack variables
@@ -72,6 +41,26 @@ loop:
 end:
     halt
 
+#algorithm to count square root:
+
+# num is the number which square root is calculated
+# res is the result
+#int32_t res = 0;
+#int32_t bit = 1 << 16; 
+
+#while (bit > num) {
+#   bit >>= 2;
+#   }
+   
+#while (bit != 0) {
+#   if (num >= res + bit) {
+#      num -= res + bit;
+#      res = (res >> 1) + bit;
+#   } else {
+#      res >>= 1;
+#   }
+#   bit >>= 2;
+#}
 
 sqrt:                           #count sqrt
     irmovq $4194304, %rdx       #2¨22
@@ -106,32 +95,32 @@ endsqrt:
 
 
 
-bs:                             #bit shift 1 right in sqrt
-    irmovq $1, %r8
-    irmovq $0, %r9
-    irmovq $0, %r14
+bs:                             #bit shift 1 right in sqrt. shift %rcx value 1 bit right
+    irmovq $1, %r8              #2^count of loops + 1
+    irmovq $0, %r9              #r9 > 1
+    irmovq $0, %r14             
 loopbs:
-    addq %r14, %rcx
-    rrmovq %rcx, %r10
-    andq %r8, %r10
-    je overbs
-    subq %r10, %rcx
+    addq %r14, %rcx             #new bits to %rcx
+    rrmovq %rcx, %r10           #clone %rcx (input to %r10)
+    andq %r8, %r10              #check if bit %r8 is 1 in %rcx
+    je overbs                   #if no overbs
+    subq %r10, %rcx             #if yes. substract it from %rcx and add %r8 > 1 bit to %14 (%r9)
     addq %r9, %rcx
     addq %r9, %r14
 overbs:
-    rrmovq %r8, %r9
-    addq %r8, %r8
-    subq %r14, %rcx
+    rrmovq %r8, %r9             #r8 < 1
+    addq %r8, %r8               #r9 < 1
+    subq %r14, %rcx             #check if there is no bits to check anymore
     jg loopbs
 endbs:
-    addq %r14, %rcx
+    addq %r14, %rcx             #%r14 is %rcx > 1 now so %rcx = %r14 = input > 1
     ret
 
-bs2:                                #shift %rdx 2 bits right
-    irmovq $4194304, %r10
-    andq %rdx, %r10
-    irmovq $1048576, %r10
-    jne endbs2
+bs2:                                #shift value of %rdx 2 bits right. this function is optimized for just this project.
+    irmovq $4194304, %r10           #mask %r10 (2^22, 2^20, 2^18...) to check value of %rdx
+    andq %rdx, %r10                 #
+    irmovq $1048576, %r10           # %r10 > 2
+    jne endbs2                      # if %r10 < 2 was %rdx continue to end
     andq %rdx, %r10
     irmovq $262144, %r10
     jne endbs2
@@ -166,11 +155,11 @@ bs2:                                #shift %rdx 2 bits right
     irmovq $0, %r10
     jne endbs2
 endbs2:
-    rrmovq %r10, %rdx
+    rrmovq %r10, %rdx          #%rdx = %r10 = input > 2
     ret
 
 
-mp1:                            #first part of multiplication
+mp1:                            #first part of multiplication    %rsi = input, %rcx = output
     irmovq $0, %rcx
     irmovq $0, %rdx
     irmovq $1, %r8
