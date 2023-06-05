@@ -46,7 +46,7 @@ end:
 # num is the number which square root is calculated
 # res is the result
 #int32_t res = 0;
-#int32_t bit = 1 << 16; 
+#int32_t bit = 1 << 22; 
 
 #while (bit > num) {
 #   bit >>= 2;
