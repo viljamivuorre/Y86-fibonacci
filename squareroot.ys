@@ -1,0 +1,106 @@
+
+#// num is the number which square root is calculated
+#// res is the result
+#int32_t res = 0;
+#int32_t bit = 1 << 30; 
+#
+#while (bit > num) {
+#   bit >>= 2;
+#   }
+#   
+#while (bit != 0) {
+#   if (num >= res + bit) {
+#      num -= res + bit;
+#      res = (res >> 1) + bit;
+#   } else {
+#      res >>= 1;
+#   }
+#   bit >>= 2;
+#}
+
+main:                           #count sqrt %rsi = input %rcx = output
+    irmovq stack, %rsp           #Initialize stack variables
+    irmovq stack, %rbp
+    irmovq $100000000000, %rsi
+    irmovq $1073741824, %rdx       #2¨30 program calculates with
+    irmovq $0, %rcx             #this value only for 65535 max output value
+loopsq1:
+    subq %rsi, %rdx             #while (%rdx > input) %rdx >> 2
+    jle oversq1
+    addq %rsi, %rdx
+    call bs2
+    jmp loopsq1
+oversq1:
+    addq %rsi, %rdx
+loopsq2:
+    irmovq $0, %r14
+    subq %r14, %rdx             #loop stops when %rdx == 0
+    je endsqrt
+    subq %rdx, %rsi
+    subq %rcx, %rsi
+    jl oversq2
+    call bs                     #if input >= %rdx + %rcx(output)
+    addq %rdx, %rcx
+    call bs2
+    jmp loopsq2
+oversq2:                        #else
+    addq %rdx, %rsi
+    addq %rcx, %rsi
+    call bs
+    call bs2
+    jmp loopsq2
+endsqrt:
+    halt
+
+
+
+bs:                             #bit shift 1 right in sqrt. shift %rcx value 1 bit right
+    irmovq $1, %r8              #2^count of loops + 1
+    irmovq $0, %r9              #r9 >> 1
+    irmovq $0, %r14             
+loopbs:
+    addq %r14, %rcx             #new bits to %rcx
+    rrmovq %rcx, %r10           #clone %rcx (input to %r10)
+    andq %r8, %r10              #check if bit %r8 is 1 in %rcx
+    je overbs                   #if no overbs
+    subq %r10, %rcx             #if yes. substract it from %rcx and add %r8 > 1 bit to %14 (%r9)
+    addq %r9, %rcx
+    addq %r9, %r14
+overbs:
+    rrmovq %r8, %r9             #r8 << 1
+    addq %r8, %r8               #r9 << 1
+    subq %r14, %rcx             #check if there is no bits to check anymore
+    jg loopbs
+endbs:
+    addq %r14, %rcx             #%r14 is %rcx > 1 now so %rcx = %r14 = input >> 1
+    ret
+
+bs2:                            #shift value of %rdx 2 bits right. same as bs but difference between
+    irmovq $1, %r8              # %r9 and %r8 is 2 bits
+    irmovq $1, %r9              #
+    andq %rdx, %r8
+    subq %r8, %rdx
+    irmovq $2, %r8
+    andq %rdx, %r8
+    subq %r8, %rdx
+    irmovq $4, %r8
+    irmovq $0, %r14             
+loopbs2:
+    addq %r14, %rdx            #
+    rrmovq %rdx, %r10           #
+    andq %r8, %r10              #
+    je overbs2                   #
+    subq %r10, %rdx             #
+    addq %r9, %rdx
+    addq %r9, %r14
+overbs2:
+    addq %r9, %r9             #%r9 << 1
+    addq %r8, %r8               #%r8 << 1
+    subq %r14, %rdx             #
+    jg loopbs2
+endbs2:
+    addq %r14, %rdx             #
+    ret
+
+.pos 0x400
+stack:

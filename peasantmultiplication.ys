@@ -1,0 +1,51 @@
+#y86 assembly program for effective multiplication for large values. %rsi and %rdi are input values and %rcx is output
+
+main:
+
+    irmovq stack, %rsp           #Initialize stack variables
+    irmovq stack, %rbp
+
+    irmovq $832726347, %rsi             #multiplication values
+    irmovq $8732648726, %rdi
+    call mp
+    halt
+
+mp:                            #first part of multiplication    %rsi, %rdi = input, %rcx = output
+    irmovq $0, %rcx
+    irmovq $0, %rdx
+    irmovq $1, %r8
+    andq %rsi, %r8
+    cmovne %rdi, %rcx           #if first bit == 1, delete it from input add 1*clone to output
+    subq %r8, %rsi
+    subq %rdx, %rsi
+    je endmp1
+    irmovq $1, %r8
+    irmovq $1, %r11
+    irmovq $1, %r12
+loopmp1:
+    addq %r8, %r8               #check every bit of %rsi and shift left by the bit index
+    rrmovq %rsi, %rdx
+    andq %r8, %rdx
+    je overmp1
+    call mp2                    #if bit is in input, shift clone and add it in output
+    subq %r8, %rsi              #delete bit from %rsi and ret in main if %rdi == 0
+    je endmp1
+overmp1:
+    addq %r11, %r12
+    jmp loopmp1
+endmp1:
+    ret
+
+mp2:                            #clones %rdi , shifts it and adds it %rcx (output)
+    rrmovq %rdi, %r10
+    rrmovq %r12, %r9
+loopmp2:
+    addq %r10, %r10
+    subq %r11, %r9
+    jg loopmp2
+endmp2:
+    addq %r10, %rcx
+    ret
+
+.pos 0x400
+stack:

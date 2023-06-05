@@ -1,0 +1,19 @@
+#this program does simple multiplication
+#%r9 and %r10 are input values and %rax is output
+
+main:
+  irmovq $783732, %r9    #input values
+  irmovq $973777, %r10
+  irmovq $0, %rax
+  irmovq $0, %r12
+  subq %r9, %r12        #check if %r9 is 0
+  je end
+  addq %r9, %r12
+  irmovq $1, %r11
+loop:  
+  addq %r10, %rax
+  subq %r11, %r9
+  jg loop
+end:
+  halt
+  
