@@ -1,8 +1,8 @@
 
 main:
 
-    irmovq pino, %rsp           #Initialize stack variables
-    irmovq pino, %rbp
+    irmovq stack, %rsp           #Initialize stack variables
+    irmovq stack, %rbp
     irmovq array, %rbx          #Array adress in %rbx
 
 loop:
@@ -200,7 +200,7 @@ endmp2:
 
 
 .pos 0x500
-pino:
+stack:
 
 .pos 0x700
 array:
