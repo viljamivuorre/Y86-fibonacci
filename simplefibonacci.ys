@@ -4,8 +4,8 @@
 
 
 main:
-    irmovq pino, %rsp           #Initialize stack variables
-    irmovq pino, %rbp
+    irmovq stack, %rsp           #Initialize stack variables
+    irmovq stack, %rbp
     irmovq array, %rbx          #Array adress in %rbx
     irmovq $8, %r8              
     irmovq $1, %r9              #first fibonacci number (always previous fibonacci number for %r10)
@@ -36,7 +36,7 @@ end:
 
 
 .pos 0x500
-pino:
+stack:
 
 .pos 0x700
 array:
