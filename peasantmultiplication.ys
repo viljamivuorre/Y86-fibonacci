@@ -1,4 +1,4 @@
-#y86 assembly program for effective multiplication for large values. %rsi and %rdi are input values and %rcx is output
+#y86 assembly program for effective multiplication with large values. %rsi and %rdi are input values and %rcx is output
 
 main:
 
