@@ -1,6 +1,7 @@
 # Y86-fibonacci
 The main goal of this project was to translate this sequence of code to y86-64 assembly:
 
+![alt text](https://github.com/viljamivuorre/Y86-fibonacci/blob/main/gitfib.GIF)
 bool isPerfectSquare(int x) {
     int s = sqrt(x);
     return (s*s == x);
