@@ -27,4 +27,4 @@ rmmovq %r12,24(%r11)
 irmovq $0,%r12
 rmmovq %r12,32(%r11)
 
-Y86 simulaattori netissä: https://boginw.github.io/js-y86-64/
+Y86 simulator: https://boginw.github.io/js-y86-64/
