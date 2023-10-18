@@ -3,9 +3,9 @@ The main goal of this project was to translate this sequence of code to y86-64 a
 
 ![alt text](https://github.com/viljamivuorre/Y86-fibonacci/blob/main/gitfib.GIF)
 
-Of course there is an easier way to calculate whether a number belongs to the Fibonacci numbers and I also implemented it in simplefibonacci.ys.
+And of course, there is an easier way to calculate whether a number belongs to the Fibonacci numbers, so I also implemented it in simplefibonacci.ys.
 
-The purpose of this project was to implement algorithms for calculating the square root, efficient multiplication, implement bit shifting in both directions with the y-86 assembly and to optimize their use in the actual work.
+The purpose of this project was to implement algorithms for calculating the square root, efficient multiplication, bit shifting in both directions with the y-86 assembly and to optimize their use in the actual work.
 
 
 The program checks the values in the array to see if they are Fibonacci numbers. The program stops and returns the first non-Fibonacci number in the register %rax
@@ -13,7 +13,7 @@ number. At the end of the array there is 0, which the program returns if all the
 
 The end result of the project was a perfect success. One criteria was to optimize it for check one 5 value array with max 100 000 commands but this program works with  < 30 000 command. 
 
-Esim. alustus:
+Example:
 .pos 0
 irmovq array,%r11
 irmovq $233,%r12
